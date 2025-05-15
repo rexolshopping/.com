@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sneakerz - Premium Footwear</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom CSS */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.8rem;
+        }
+        
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1600269452121-4f2416e55c28');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 100px 0;
+            margin-bottom: 50px;
+        }
+        
+        .product-card {
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 0;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            background: #fff;
+            min-height: 370px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            overflow: hidden; /* Ensure image zoom stays inside card */
+            position: relative; /* For stacking context */
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .product-card .btn-outline-primary {
+            font-size: 1rem;
+            padding: 8px 24px;
+            border-radius: 30px;
+            font-weight: 500;
+            margin-top: 10px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .product-card .btn-outline-primary:hover {
+            background: #0d6efd;
+            color: #fff;
+        }
+
+        .product-img {
+            flex: 1 0 auto;
+            width: 100%;
+            height: 260px;
+            max-width: 100%;
+            object-fit: cover;
+            margin-bottom: 0;
+            border-radius: 10px 10px 0 0;
+            background: #fff;
+            display: block;
+            transition: transform 0.4s cubic-bezier(.4,2,.3,1);
+            position: relative; /* Ensure stacking context */
+            z-index: 1; /* Keep image below title */
+        }
+
+        .product-card:hover .product-img,
+        .product-img:hover {
+            transform: scale(1.08);
+            z-index: 2;
+        }
+        
+        .price {
+            font-weight: bold;
+            color: #e63946;
+            font-size: 1.2rem;
+        }
+        
+        @media (max-width: 767.98px) {
+            .product-card {
+                min-height: 220px;
+                padding: 0;
+            }
+            .product-img {
+                height: 140px;
+                max-width: 100%;
+            }
+            .product-card h3 {
+                font-size: 1.1rem;
+            }
+            .product-card .price {
+                font-size: 1rem;
+            }
+        }
+        
+        /* Product Detail Modal Styles */
+        .modal-lg {
+            max-width: 800px;
+        }
+        
+        .detail-thumb {
+            cursor: pointer;
+            border: 1px solid #ddd;
+            transition: all 0.3s;
+            margin-right: 10px;
+        }
+        
+        .detail-thumb:hover {
+            opacity: 0.7;
+        }
+        
+        .color-option {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .color-option.selected {
+            border-color: #000;
+        }
+        
+        .size-option {
+            display: inline-block;
+            padding: 5px 15px;
+            margin-right: 8px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            margin-bottom: 5px;
+        }
+        
+        .size-option.selected {
+            background: #000;
+            color: #fff;
+        }
+        
+        /* Checkout Modal Styles */
+        #checkoutModal .modal-header {
+            padding: 1rem 2rem;
+        }
+        
+        #checkoutModal .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        #checkoutModal .form-control {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+        }
+        
+        #checkoutModal .form-check {
+            margin-bottom: 0.5rem;
+        }
+        
+        #checkoutModal .card {
+            border-radius: 0.75rem;
+            border: 1px solid #eee;
+        }
+        
+        .btn-danger {
+            background-color: #ff5722;
+            border-color: #ff5722;
+        }
+        
+        .btn-danger:hover {
+            background-color: #e64a19;
+            border-color: #e64a19;
+        }
+
+        #detailMainImage {
+            width: 100%;
+            max-width: 400px;
+            height: 340px;
+            object-fit: cover;
+            border-radius: 12px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            transition: transform 0.4s cubic-bezier(.4,2,.3,1);
+            /* জুম ইফেক্টের জন্য ট্রানজিশন */
+        }
+        /* জুম ইফেক্ট */
+        #detailMainImage.zoomed {
+            transform: scale(1.15);
+            z-index: 2;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            cursor: zoom-out;
+        }
+        @media (max-width: 767.98px) {
+            #detailMainImage {
+                max-width: 100%;
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">SNEAKERZ</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Products</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count badge bg-danger ms-1">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-4 fw-bold">Premium Sneakers Collection</h1>
+            <p class="lead">Discover the latest trends in footwear</p>
+            <button class="btn btn-primary btn-lg px-4">Shop Now</button>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Featured Products</h2>
+            <div class="row" id="product-container">
+                <!-- Products will be loaded here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Detail Modal -->
+    <div class="modal fade" id="productDetailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productDetailTitle">Product Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- Image Gallery -->
+                        <div class="col-md-6">
+                            <img id="detailMainImage" src="" class="img-fluid mb-3" style="max-height: 300px; object-fit: contain;">
+                            <div class="d-flex">
+                                <img src="" class="detail-thumb" width="80" onclick="changeDetailImage(this)">
+                                <img src="" class="detail-thumb" width="80" onclick="changeDetailImage(this)">
+                                <img src="" class="detail-thumb" width="80" onclick="changeDetailImage(this)">
+                            </div>
+                        </div>
+                        
+                        <!-- Product Info -->
+                        <div class="col-md-6">
+                            <h4 id="detailProductName"></h4>
+                            <div class="mb-2">
+                                <span class="price fw-bold" id="detailProductPrice"></span>
+                                <span class="text-muted ms-2"><del id="detailOldPrice"></del></span>
+                            </div>
+                            
+                            <!-- Color Options -->
+                            <div class="mb-3">
+                                <h6>Color:</h6>
+                                <div class="color-options">
+                                    <span class="color-option selected" data-color="red" style="background-color: #e63946;"></span>
+                                    <span class="color-option" data-color="black" style="background-color: #000;"></span>
+                                    <span class="color-option" data-color="white" style="background-color: #fff; border: 1px solid #ddd;"></span>
+                                </div>
+                            </div>
+                            
+                            <!-- Size Options -->
+                            <div class="mb-3">
+                                <h6>Size:</h6>
+                                <div class="size-options">
+                                    <span class="size-option">US 7</span>
+                                    <span class="size-option selected">US 8</span>
+                                    <span class="size-option">US 9</span>
+                                    <span class="size-option">US 10</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Quantity -->
+                            <div class="mb-4">
+                                <h6>Quantity:</h6>
+                                <div class="input-group" style="width: 150px;">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="updateDetailQuantity(-1)">-</button>
+                                    <input type="text" class="form-control text-center" value="1" id="detailQuantity">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="updateDetailQuantity(1)">+</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="d-flex flex-column gap-2 mb-4">
+                                <button class="btn btn-danger w-100 py-2" onclick="buyNow()">
+                                    <i class="fas fa-bolt me-2"></i> Buy Now
+                                </button>
+                                <button class="btn btn-primary w-100 py-2" onclick="addToCartFromDetail()">
+                                    <i class="fas fa-cart-plus me-2"></i> Add to Cart
+                                </button>
+                                <button class="btn btn-outline-secondary w-100 py-2">
+                                    <i class="fas fa-heart me-2"></i> Add to Wishlist
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Product Details -->
+                    <div class="mt-4 pt-3 border-top">
+                        <h5>Description</h5>
+                        <p id="detailProductDescription"></p>
+                        <ul id="detailProductFeatures"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="modal fade" id="checkoutModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Checkout Information</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="checkoutForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="address" class="form-label">Full Address</label>
+                                <textarea class="form-control" id="address" rows="3" required></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Shipping Area</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="shippingArea" id="insideDhaka" value="inside" checked>
+                                    <label class="form-check-label" for="insideDhaka">
+                                        Inside Dhaka (60 TK)
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="shippingArea" id="outsideDhaka" value="outside">
+                                    <label class="form-check-label" for="outsideDhaka">
+                                        Outside Dhaka (100 TK)
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Payment Method</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="cod" checked>
+                                    <label class="form-check-label" for="cod">
+                                        Cash on Delivery
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="card p-3 mt-3">
+                                    <h5>Order Summary</h5>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Subtotal:</span>
+                                        <span id="subtotal">0 TK</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Shipping:</span>
+                                        <span id="shippingCharge">60 TK</span>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex justify-content-between fw-bold">
+                                        <span>Total:</span>
+                                        <span id="totalAmount">60 TK</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary w-100 py-2">
+                                    <i class="fas fa-check-circle me-2"></i> Confirm Order
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <p>&copy; 2023 Sneakerz. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+</body>
+</html>

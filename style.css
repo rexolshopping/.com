@@ -1,0 +1,28 @@
+<link rel="stylesheet" href="style.css">
+
+.product-card .btn-outline-primary,
+.product-card .btn-primary,
+.product-card .btn-outline-secondary,
+.product-card .btn-danger {
+    font-size: 1rem;
+    padding: 8px 24px;
+    border-radius: 30px;
+    font-weight: 500;
+    margin-top: 10px;
+    transition: background 0.2s, color 0.2s;
+}
+.product-card .btn-outline-primary:hover {
+    background: #0d6efd;
+    color: #fff;
+}
+.size-option.selected {
+    background: #0d6efd;
+    color: #fff;
+    border-color: #0d6efd;
+}
+.color-option.selected {
+    border-color: #0d6efd;
+}
+.detail-thumb.selected {
+    border: 2px solid #0d6efd;
+}
